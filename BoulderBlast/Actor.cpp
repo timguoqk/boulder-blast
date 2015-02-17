@@ -27,8 +27,6 @@ void Player::doSomething() {
         switch (ch) {
             case KEY_PRESS_ESCAPE:
                 /*If the user pressed the Escape key, the user is asking to abort the current level. In this case, the Player object should set itself to dead. The code in your StudentWorld class should detect that the player has died and address this appropriately (e.g., replay the level from scratch, or end the game).*/
-                //TODO: should i do this?
-                //m_hitPoints = 0;
                 getWorld()->playerDied();
                 //TODO: should it play the died sound?
                 break;
@@ -40,9 +38,9 @@ void Player::doSomething() {
                     break;
                 m_ammu --;
                 getWorld()->playSound(SOUND_PLAYER_FIRE);
-#warning haven't finish yet!
-                std::pair<int, int> loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
-                //Bullet;
+                // TODO: add bullet
+//                std::pair<int, int> loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
+//                //Bullet;
                 break;
             }
             case KEY_PRESS_UP:

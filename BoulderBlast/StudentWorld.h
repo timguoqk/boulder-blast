@@ -3,13 +3,17 @@
 
 #include "GameWorld.h"
 #include "GameConstants.h"
-#include "Actor.h"
+#include "GraphObject.h"
 #include <string>
-#include <vector>
 #include <utility>
-#include <unordered_map>
+#include <map>
+#include <vector>
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
+class Player;
+class Actor;
+class Player;
 
 class StudentWorld : public GameWorld
 {
@@ -19,32 +23,21 @@ public:
 	{
 	}
 
-	virtual int init()
-	{
-		return GWSTATUS_CONTINUE_GAME;
-	}
-
-	virtual int move()
-	{
-		  // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times 
-		decLives();
-		return GWSTATUS_PLAYER_DIED;
-	}
-
-	virtual void cleanUp()
-	{
-	}
+    virtual int init();
+    virtual int move();
+    virtual void cleanUp();
     
+    virtual ~StudentWorld();
     void playerDied();
-    void addObject();
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
+    GraphObject* getObject(int x, int y);
+    
     
 private:
-    /*Add any private data members to this class required to keep track of
-     Walls as well as the Player object. You may ignore all other items in
-     the maze such as SnarlBots, the Exit, etc. for part #1.*/
+    /*Add any private data members to this class required to keep track of Walls as well as the Player object. You may ignore all other items in the maze such as SnarlBots, the Exit, etc. for part #1.*/
     
-    //std::unordered_map<std::pair<int, int>, GraphObject> m_map;
+    Player *m_player;
+    std::vector<Actor*> m_actors;
 };
 
 #endif // STUDENTWORLD_H_
