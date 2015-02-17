@@ -3,7 +3,11 @@
 
 #include "GameWorld.h"
 #include "GameConstants.h"
+#include "Actor.h"
 #include <string>
+#include <vector>
+#include <utility>
+#include <unordered_map>
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
@@ -30,8 +34,17 @@ public:
 	virtual void cleanUp()
 	{
 	}
-
+    
+    void playerDied();
+    void addObject();
+    static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
+    
 private:
+    /*Add any private data members to this class required to keep track of
+     Walls as well as the Player object. You may ignore all other items in
+     the maze such as SnarlBots, the Exit, etc. for part #1.*/
+    
+    //std::unordered_map<std::pair<int, int>, GraphObject> m_map;
 };
 
 #endif // STUDENTWORLD_H_
