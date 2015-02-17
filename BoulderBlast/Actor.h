@@ -24,8 +24,8 @@ class Wall : public Actor {
 public:
     Wall(int startX, int startY, StudentWorld *world)
     :Actor(IID_WALL, startX, startY, none, world){  setVisible(true);  };
-    virtual void doSomething() { /* do nothing */};
-    virtual void attacked() { /* do nothing */};
+    virtual void doSomething() {  /* do nothing */  };
+    virtual void attacked() {  /* do nothing */  };
 };
 
 class Player : public Actor {

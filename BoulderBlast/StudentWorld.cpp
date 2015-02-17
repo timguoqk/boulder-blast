@@ -60,21 +60,19 @@ int StudentWorld::move() {
 
 void StudentWorld::cleanUp() {
     while (!m_actors.empty()) {
-        Actor *a = m_actors.back();
-        delete a;
+        delete m_actors.back();
         m_actors.pop_back();
     }
+    delete m_player;
 }
 
 StudentWorld::~StudentWorld() {
-    // TODO: Is this necessary?
     cleanUp();
 }
 
 pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Direction d) {
     pair<int, int> p(x,y);
     switch (d) {
-        //TODO: what if overflows?
         case GraphObject::up:
             p.first ++;
             break;
