@@ -28,16 +28,14 @@ public:
     virtual void cleanUp();
     
     virtual ~StudentWorld();
-    void playerDied();
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
     GraphObject* getObject(int x, int y);
-    
+    bool exitShown() const {  return m_exitShown;  }
     
 private:
-    /*Add any private data members to this class required to keep track of Walls as well as the Player object. You may ignore all other items in the maze such as SnarlBots, the Exit, etc. for part #1.*/
-    
     Player *m_player;
     std::vector<Actor*> m_actors;
+    bool m_exitShown = false;
 };
 
 #endif // STUDENTWORLD_H_

@@ -34,8 +34,11 @@ public:
     virtual void doSomething();
     virtual void attacked();
     void moveIfPossible(int x, int y);
+    bool dead() const {  return m_dead;  }
+    bool won() const {  return m_won;  }
 private:
     int m_hitPoints = 20, m_ammu = 20;
+    bool m_dead = false, m_won = false;
 };
 
 class Boulder : public Actor {

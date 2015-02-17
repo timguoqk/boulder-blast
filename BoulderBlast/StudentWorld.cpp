@@ -13,11 +13,11 @@ GameWorld* createStudentWorld(string assetDir)
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
 
 int StudentWorld::init() {
-    string curLevel = (getLevel() < 10) ? "0"+to_string(getLevel())+".dat" : "level"+to_string(getLevel())+".dat";
+    string curLevel = (getLevel() < 10) ? "level0"+to_string(getLevel())+".dat" : "level"+to_string(getLevel())+".dat";
     Level lev(assetDirectory());
     auto result = lev.loadLevel(curLevel);
     if (result == Level::load_fail_bad_format || result == Level::load_fail_file_not_found)
-        return -1;
+        return GWSTATUS_LEVEL_ERROR;
     //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
     for (int i=0; i<VIEW_WIDTH; i++) {
         for (int j=0; j<VIEW_HEIGHT; j++) {
@@ -40,10 +40,22 @@ int StudentWorld::init() {
 
 int StudentWorld::move() {
     // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
-    for (Actor *a : m_actors)
+    for (Actor *a : m_actors) {
         a->doSomething();
-    decLives();  //TODO: what the heck
-    return GWSTATUS_PLAYER_DIED;
+        if (m_player->dead()){
+            decLives();
+            return GWSTATUS_PLAYER_DIED;
+        }
+    }
+    // TODO: won't commit suicide?
+    m_player->doSomething();
+    if (m_player->won()) {
+        //TODO: bonus score
+        //increaseScore(2000+());
+        return GWSTATUS_FINISHED_LEVEL;
+    }
+    
+    return GWSTATUS_CONTINUE_GAME;
 }
 
 void StudentWorld::cleanUp() {
@@ -79,11 +91,6 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
             break;
     }
     return p;
-}
-
-void StudentWorld::playerDied() {
-    // game over, clean it up
-    playSound(SOUND_ROBOT_DIE);
 }
 
 GraphObject* StudentWorld::getObject(int x, int y) {
