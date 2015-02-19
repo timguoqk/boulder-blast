@@ -9,19 +9,31 @@ Player::Player(int startX, int startY, StudentWorld *world)
 }
 
 void Player::moveIfPossible(int x, int y) {
-    if (x >= 0 && x <= VIEW_WIDTH && y >= 0 && y <= VIEW_HEIGHT)
-        /*A player is forbidden from moving onto an adjacent target square under the following circumstances:
-         i. The square has a Factory, a Wall, or a Hole
-         ii. The square has a robot of any type
-         iii. The square has a Boulder and the Boulder cannot be pushed out of the way in the direction the user is trying to move (e.g., there’s no empty square or Hole in the maze where the user is trying to push the boulder).
-         If the player is able to move onto a square containing a Boulder by pushing it out of the way, then the Player’s code must adjust the x,y location of the Boulder appropriately by “pushing” the Boulder with a push() method defined in the Boulder class.
-         For more information on how and when Boulders can be pushed, please see the Boulder section of this document.*/
-        //TODO: implement this!
-        if (auto obj = getWorld()->getActor(x, y)) {
-            if (obj->getTypeID() == IID_WALL)
+    if (x <= 0 && x >= VIEW_WIDTH && y <= 0 && y >= VIEW_HEIGHT)
+        return;
+    
+    if (auto obj = getWorld()->getActor(x, y))
+        switch (obj->getTypeID()) {
+            case IID_ROBOT_FACTORY:
+            case IID_WALL:
+            case IID_HOLE:
+            case IID_SNARLBOT:
+            case IID_ANGRY_KLEPTOBOT:
+            case IID_KLEPTOBOT:
                 return;
+            
+            case IID_BOULDER:
+                /*
+                 iii. The square has a Boulder and the Boulder cannot be pushed out of the way in the direction the user is trying to move (e.g., there’s no empty square or Hole in the maze where the user is trying to push the boulder).
+                 If the player is able to move onto a square containing a Boulder by pushing it out of the way, then the Player’s code must adjust the x,y location of the Boulder appropriately by “pushing” the Boulder with a push() method defined in the Boulder class.
+                 For more information on how and when Boulders can be pushed, please see the Boulder section of this document.*/
+                //TODO: boulder case
+                break;
+            default:
+                break;
         }
-        moveTo(x, y);
+    
+    moveTo(x, y);
 };
 
 void Player::doSomething() {
