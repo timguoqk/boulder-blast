@@ -91,7 +91,7 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
     return p;
 }
 
-GraphObject* StudentWorld::getObject(int x, int y) {
+Actor* StudentWorld::getActor(int x, int y) {
     auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});
     if (it != m_actors.end())
         return *it;

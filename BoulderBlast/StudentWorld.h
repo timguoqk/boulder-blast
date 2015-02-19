@@ -29,7 +29,7 @@ public:
     
     virtual ~StudentWorld();
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
-    GraphObject* getObject(int x, int y);
+    Actor* getActor(int x, int y);
     bool exitShown() const {  return m_exitShown;  }
     
 private:

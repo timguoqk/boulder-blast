@@ -15,7 +15,8 @@ public:
     virtual void doSomething() = 0;
     virtual void attacked() = 0;
     
-    StudentWorld* getWorld(){  return m_world;  }
+    StudentWorld* getWorld() const {  return m_world;  }
+    virtual int getTypeID() const = 0;
 private:
     StudentWorld *m_world;
 };
@@ -26,6 +27,8 @@ public:
     :Actor(IID_WALL, startX, startY, none, world){  setVisible(true);  };
     virtual void doSomething() {  /* do nothing */  };
     virtual void attacked() {  /* do nothing */  };
+    
+    virtual int getTypeID() const {  return IID_WALL;  }
 };
 
 class Player : public Actor {
@@ -33,9 +36,11 @@ public:
     Player(int startX, int startY, StudentWorld *world);
     virtual void doSomething();
     virtual void attacked();
+    
     void moveIfPossible(int x, int y);
     bool dead() const {  return m_dead;  }
     bool won() const {  return m_won;  }
+    virtual int getTypeID() const {  return IID_PLAYER;  }
 private:
     int m_hitPoints = 20, m_ammu = 20;
     bool m_dead = false, m_won = false;
@@ -43,6 +48,7 @@ private:
 
 class Boulder : public Actor {
 public:
+    virtual int getTypeID() const {  return IID_BOULDER;  }
 };
 
 class Bullet {

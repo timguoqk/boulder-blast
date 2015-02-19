@@ -17,8 +17,8 @@ void Player::moveIfPossible(int x, int y) {
          If the player is able to move onto a square containing a Boulder by pushing it out of the way, then the Player’s code must adjust the x,y location of the Boulder appropriately by “pushing” the Boulder with a push() method defined in the Boulder class.
          For more information on how and when Boulders can be pushed, please see the Boulder section of this document.*/
         //TODO: implement this!
-        if (auto obj = getWorld()->getObject(x, y)) {
-            if (obj->getID() == IID_WALL)
+        if (auto obj = getWorld()->getActor(x, y)) {
+            if (obj->getTypeID() == IID_WALL)
                 return;
         }
         moveTo(x, y);
@@ -62,7 +62,7 @@ void Player::doSomething() {
             default:
                 break;
         }
-    if (getWorld()->getObject(getX(), getY()) && getWorld()->getObject(getX(), getY())->getID() == IID_EXIT && getWorld()->exitShown()) {
+    if (getWorld()->getActor(getX(), getY()) && getWorld()->getActor(getX(), getY())->getTypeID() == IID_EXIT && getWorld()->exitShown()) {
         m_won = true;
     }
 }
