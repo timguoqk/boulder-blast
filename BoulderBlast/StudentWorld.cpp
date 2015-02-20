@@ -16,8 +16,10 @@ int StudentWorld::init() {
     string curLevel = (getLevel() < 10) ? "level0"+to_string(getLevel())+".dat" : "level"+to_string(getLevel())+".dat";
     Level lev(assetDirectory());
     auto result = lev.loadLevel(curLevel);
-    if (result == Level::load_fail_bad_format || result == Level::load_fail_file_not_found)
+    if (result == Level::load_fail_bad_format)
         return GWSTATUS_LEVEL_ERROR;
+    if (result == Level::load_fail_file_not_found || getLevel() > 99)
+        return GWSTATUS_PLAYER_WON;
     //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
     for (int i=0; i<VIEW_WIDTH; i++) {
         for (int j=0; j<VIEW_HEIGHT; j++) {
@@ -34,7 +36,6 @@ int StudentWorld::init() {
             }
         }
     }
-    
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -67,7 +68,12 @@ void StudentWorld::cleanUp() {
 }
 
 StudentWorld::~StudentWorld() {
-    cleanUp();
+    //CAUTION: This code is identical to cleanUp()
+    while (!m_actors.empty()) {
+        delete m_actors.back();
+        m_actors.pop_back();
+    }
+    delete m_player;
 }
 
 pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Direction d) {
@@ -91,8 +97,8 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
     return p;
 }
 
-Actor* StudentWorld::getActor(int x, int y) {
-    auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});
+Actor* StudentWorld::getActor(int x, int y) const {
+    auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find actor at (x, y)
     if (it != m_actors.end())
         return *it;
     return nullptr;

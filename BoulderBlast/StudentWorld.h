@@ -26,10 +26,10 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    
     virtual ~StudentWorld();
+    
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
-    Actor* getActor(int x, int y);
+    Actor* getActor(int x, int y) const;
     bool exitShown() const {  return m_exitShown;  }
     
 private:
