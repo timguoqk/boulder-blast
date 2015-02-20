@@ -41,7 +41,7 @@ void Player::doSomething() {
     if (getWorld()->getKey(ch))
         switch (ch) {
             case KEY_PRESS_ESCAPE:
-                m_dead = true;
+                setDead();
                 break;
             case KEY_PRESS_SPACE:
             {
@@ -80,12 +80,26 @@ void Player::doSomething() {
 }
 
 void Player::attacked() {
-    //TODO: what if negative?
-    m_hitPoints -= 2;
-    if (m_hitPoints > 0)
+    if (getHitPoints() > 0)
         getWorld()->playSound(SOUND_PLAYER_IMPACT);
     else {
         getWorld()->playSound(SOUND_PLAYER_DIE);
-        m_dead = true;
+        setDead();
     }
+}
+
+void Bullet::doSomething() {
+    if (m_dead)
+        return;
+    auto loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
+    // TODO: When there're multiple actors at the same place
+    Actor *a = getWorld()->getActor(loc.first, loc.second);
+    if (a) {
+        // There's something in the next block
+        a->setHitPoints(a->getHitPoints() - 2);
+        a->attacked();
+        setDead();
+    }
+    else
+        moveTo(loc.first, loc.second);
 }
