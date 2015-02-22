@@ -11,62 +11,75 @@ class StudentWorld;
 class Actor : public GraphObject {
 public:
     Actor(int imageID, int startX, int startY, Direction dir, StudentWorld *world)
-    :GraphObject(imageID, startX, startY, dir), m_world(world){};
+    :GraphObject(imageID, startX, startY, dir), m_world(world){  setVisible(true);  };
     virtual void doSomething() = 0;
     virtual void attacked() = 0;
-    virtual bool shouldBeRemoved() const {  return m_dead || m_hitPoints <= 0;  }
-    virtual void setShouldBeRemoved() {  m_dead = true;  }
+    virtual bool shouldBeRemoved() const {  return m_shouldBeRemoved || m_hitPoints <= 0;  }
+    void setShouldBeRemoved() {  m_shouldBeRemoved = true;  }
+    virtual int getTypeID() const = 0;
     
     StudentWorld* getWorld() const {  return m_world;  }
-    virtual int getTypeID() const = 0;
     int getHitPoints() const {  return m_hitPoints;  };
-    virtual void setHitPoints(int hp) {  m_hitPoints = hp;  };
+    void setHitPoints(int hp) {  m_hitPoints = hp;  };
 private:
     StudentWorld *m_world;
+    bool m_shouldBeRemoved = false;
     int m_hitPoints = 20;
-    bool m_dead = false;
+};
+
+class Attacker : public Actor {
+public:
+    Attacker(int imageID, int startX, int startY, Direction dir, StudentWorld *world)
+    :Actor(imageID, startX, startY, dir, world) {};
+    int getAmmo() const {  return m_ammo;  }
+    void setAmmo(int ammo) {  m_ammo = ammo;  }
+private:
+    int m_ammo = 20;
 };
 
 class Wall : public Actor {
 public:
     Wall(int startX, int startY, StudentWorld *world)
-    :Actor(IID_WALL, startX, startY, none, world){  setVisible(true);  };
+    :Actor(IID_WALL, startX, startY, none, world){};
     virtual void doSomething() {  /* do nothing */  };
     virtual void attacked() {  /* do nothing */  };
     
     virtual int getTypeID() const {  return IID_WALL;  }
 };
 
-class Player : public Actor {
+class Player : public Attacker {
 public:
-    Player(int startX, int startY, StudentWorld *world);
+    Player(int startX, int startY, StudentWorld *world)
+    :Attacker(IID_PLAYER, startX, startY, right, world){}
     virtual void doSomething();
     virtual void attacked();
     
     void moveIfPossible(int x, int y);
     virtual int getTypeID() const {  return IID_PLAYER;  }
-    int getAmmo() const {  return m_ammo;  }
+    
 private:
-    int m_ammo = 20;
 };
 
 class Boulder : public Actor {
 public:
+    Boulder(int startX, int startY, StudentWorld *world)
+    :Actor(IID_BOULDER, startX, startY, none, world) {  setHitPoints(10);  };
+    virtual void doSomething() {  /* do nothing */  };
+    virtual void attacked() {  /* do nothing */  };
     virtual int getTypeID() const {  return IID_BOULDER;  }
-    virtual bool shouldBeRemoved() const;
+    bool push(Direction dir);
+
 };
 
 class Bullet : public Actor {
 public:
     Bullet(int startX, int startY, Direction dir, StudentWorld *world)
-    :Actor(IID_BULLET, startX, startY, dir, world) {  setVisible(true);  };
+    :Actor(IID_BULLET, startX, startY, dir, world){}
     virtual void doSomething();
-    
-    //TODO: repeated behaviors. better solution?
-    bool dead() const {  return m_dead;  }
+    virtual void attacked() {  /* do nothing */  };
+    virtual int getTypeID() const {  return IID_BULLET;  }
 private:
-    bool m_dead = false;
-
+    bool check();
 };
 
 class Exit : public Actor {

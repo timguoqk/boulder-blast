@@ -32,8 +32,11 @@ int StudentWorld::init() {
                     m_player = new Player(i, j, this);
                     m_actors.push_back(m_player);
                     break;
-                case Level::wall:
-                    m_actors.push_back(new Wall(i, j, this));
+//                case Level::wall:
+//                    m_actors.push_back(new Wall(i, j, this));
+//                    break;
+                case Level::boulder:
+                    m_actors.push_back(new Boulder(i, j, this));
                     break;
                 case Level::exit:
                     m_exitLoc = pair<int, int>(i, j);
@@ -48,6 +51,8 @@ int StudentWorld::init() {
     m_bonus = 1000;
     m_score = 0;
     m_currentJewels = 0;
+    //TODO: del this line
+    m_totalJewels = 9999;
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -68,7 +73,7 @@ int StudentWorld::move() {
     for (Actor *a : m_actors) {
         //TODO: OK to assume all actors are active?
         a->doSomething();
-        if (m_player->dead()){
+        if (m_player->shouldBeRemoved()){
             decLives();
             return GWSTATUS_PLAYER_DIED;
         }
@@ -78,12 +83,15 @@ int StudentWorld::move() {
         }
     }
     
-    for (auto it = m_actors.begin(); it != m_actors.end(); it ++)
+    // Remove shouldBeRemoved actors
+    for (auto it = m_actors.begin(); it != m_actors.end(); ) {
         if ((*it)->shouldBeRemoved()) {
-            //TODO: double check this part
             delete *it;
-            m_actors.erase(it);
+            it = m_actors.erase(it);
         }
+        else
+            it ++;
+    }
     
     if (shouldShowExit()) {
         Actor *exit = *find_if(m_actors.begin(), m_actors.end(), [](Actor *a){  return a->getTypeID() == IID_EXIT;  });
@@ -118,16 +126,16 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
     pair<int, int> p(x,y);
     switch (d) {
         case GraphObject::up:
-            p.first ++;
+            p.second ++;
             break;
         case GraphObject::down:
-            p.first --;
-            break;
-        case GraphObject::left:
             p.second --;
             break;
+        case GraphObject::left:
+            p.first --;
+            break;
         case GraphObject::right:
-            p.second ++;
+            p.first ++;
             break;
         default:
             break;

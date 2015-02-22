@@ -30,6 +30,7 @@ public:
     
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
     Actor* getActor(int x, int y) const;
+    void addActor(Actor *a) {  m_actors.push_back(a);  }
     bool shouldShowExit() const {  return m_currentJewels == m_totalJewels;  }
     bool playerWon() const;
     

@@ -3,17 +3,13 @@
 
 // Students:  Add code to this file (if you wish), Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-Player::Player(int startX, int startY, StudentWorld *world)
-:Actor(IID_PLAYER, startX, startY, right, world){
-    setVisible(true);
-}
-
 void Player::moveIfPossible(int x, int y) {
+    // Move by default, return if cannot move
     if (x <= 0 && x >= VIEW_WIDTH && y <= 0 && y >= VIEW_HEIGHT)
         return;
     
-    if (auto obj = getWorld()->getActor(x, y))
-        switch (obj->getTypeID()) {
+    if (auto ptr = getWorld()->getActor(x, y))
+        switch (ptr->getTypeID()) {
             case IID_ROBOT_FACTORY:
             case IID_WALL:
             case IID_HOLE:
@@ -23,12 +19,9 @@ void Player::moveIfPossible(int x, int y) {
                 return;
             
             case IID_BOULDER:
-                /*
-                 iii. The square has a Boulder and the Boulder cannot be pushed out of the way in the direction the user is trying to move (e.g., there’s no empty square or Hole in the maze where the user is trying to push the boulder).
-                 If the player is able to move onto a square containing a Boulder by pushing it out of the way, then the Player’s code must adjust the x,y location of the Boulder appropriately by “pushing” the Boulder with a push() method defined in the Boulder class.
-                 For more information on how and when Boulders can be pushed, please see the Boulder section of this document.*/
-                //TODO: boulder case
-                break;
+                if (!(dynamic_cast<Boulder *>(ptr)->push(getDirection())))
+                    return;
+                
             default:
                 break;
         }
@@ -45,14 +38,13 @@ void Player::doSomething() {
                 break;
             case KEY_PRESS_SPACE:
             {
-                /*If the user pressed the space bar, then if the Player has any ammunition, the Player will fire a Bullet, which reduces their ammunition count by 1. To fire a Bullet, a new Bullet object must be added at the square immediately in front of the Player’s avatar, facing the same direction as the avatar. For example, if the Player is at x=10,y=7, facing upward, then the Bullet would be created at location x=10, y=8, facing upward. Every time the Player fires a bullet, your game MUST play the sound SOUND_PLAYER_FIRE (see the StudentWorld section of this document for details on how to play a sound).*/
-                if (m_ammo <= 0)
+                if (getAmmo() <= 0)
                     break;
-                m_ammo --;
+                setAmmo(getAmmo()-1);
                 getWorld()->playSound(SOUND_PLAYER_FIRE);
-                // TODO: add bullet
-//                std::pair<int, int> loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
-//                //Bullet;
+                auto loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
+                getWorld()->addActor(new Bullet(loc.first, loc.second, getDirection(), getWorld()));
+                getWorld()->playSound(SOUND_PLAYER_FIRE);
                 break;
             }
             case KEY_PRESS_UP:
@@ -85,23 +77,52 @@ void Player::attacked() {
     }
 }
 
-void Bullet::doSomething() {
-    if (m_dead)
-        return;
-    auto loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
+bool Bullet::check() {
     // TODO: When there're multiple actors at the same place
-    Actor *a = getWorld()->getActor(loc.first, loc.second);
+    Actor *a = getWorld()->getActor(getX(), getY());
     if (a) {
         // There's something in the next block
-        a->setHitPoints(a->getHitPoints() - 2);
-        a->attacked();
-        setShouldBeRemoved();
+        switch (a->getTypeID()) {
+            case IID_BOULDER:
+            case IID_ANGRY_KLEPTOBOT:
+            case IID_KLEPTOBOT:
+            case IID_SNARLBOT:
+            case IID_PLAYER:
+                a->setHitPoints(a->getHitPoints() - 2);
+                a->attacked();
+                
+            case IID_ROBOT_FACTORY:
+            case IID_WALL:
+                // Remove but do no damage
+                //TODO: Note: If a Bullet finds itself on a square with both a robot and a Factory, then the Bullet must damage the robot.
+                setShouldBeRemoved();
+                return false;
+                
+            default:
+                break;
+        }
     }
-    else
-        moveTo(loc.first, loc.second);
+    return true;
 }
 
-bool Boulder::shouldBeRemoved() const {
-    //TODO: shouldBeRemoved code
+void Bullet::doSomething() {
+    if (shouldBeRemoved())
+        return;
+    if (check()) {
+        auto loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
+        moveTo(loc.first, loc.second);
+        check();
+    }
+}
+
+bool Boulder::push(Direction dir) {
+    auto loc = StudentWorld::locationAtDirection(getX(), getY(), dir);
+    // TODO: When there're multiple actors at the same place
+    Actor *a = getWorld()->getActor(loc.first, loc.second);
+    if (!a || a->getTypeID() == IID_HOLE) {
+        moveTo(loc.first, loc.second);
+        return true;
+    }
+    // Cannot push, return false
     return false;
 }
