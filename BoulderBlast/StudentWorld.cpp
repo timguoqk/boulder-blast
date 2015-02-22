@@ -2,6 +2,8 @@
 #include "Level.h"
 #include "Actor.h"
 #include <string>
+#include <iomanip>
+#include <sstream>
 #include <algorithm>
 using namespace std;
 
@@ -21,40 +23,77 @@ int StudentWorld::init() {
     if (result == Level::load_fail_file_not_found || getLevel() > 99)
         return GWSTATUS_PLAYER_WON;
     //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
+    
+    //TODO: what if the level is illegal?
     for (int i=0; i<VIEW_WIDTH; i++) {
         for (int j=0; j<VIEW_HEIGHT; j++) {
             switch (lev.getContentsOf(i, j)) {
                 case Level::player:
                     m_player = new Player(i, j, this);
+                    m_actors.push_back(m_player);
                     break;
                 case Level::wall:
                     m_actors.push_back(new Wall(i, j, this));
                     break;
+                case Level::exit:
+                    m_exitLoc = pair<int, int>(i, j);
                 //TODO: other situations
                 default:
                     break;
             }
         }
     }
+    
+    // Init variables
+    m_bonus = 1000;
+    m_score = 0;
+    m_currentJewels = 0;
     return GWSTATUS_CONTINUE_GAME;
 }
 
 int StudentWorld::move() {
+    // Update the stat text
+    ostringstream oss;
+    oss.fill('0');
+    oss << "Score: " << setw(7) << m_score << "  ";
+    oss << "Level: " << setw(2) << getLevel() << "  ";
+    oss.fill(' ');
+    oss << "Lives: " << setw(2) << getLives() << "  ";
+    oss << "Health: " << setw(3) << m_player->getHitPoints()*5 << "%  ";
+    oss << "Ammo: " << setw(3) << m_player->getAmmo() << "  ";
+    oss << "Bonus: " << setw(4) << m_bonus;
+    setGameStatText(oss.str());
+    
     // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
     for (Actor *a : m_actors) {
+        //TODO: OK to assume all actors are active?
         a->doSomething();
         if (m_player->dead()){
             decLives();
             return GWSTATUS_PLAYER_DIED;
         }
+        if (playerWon()) {
+            increaseScore(2000+m_bonus);
+            return GWSTATUS_FINISHED_LEVEL;
+        }
     }
-    // TODO: won't commit suicide?
-    m_player->doSomething();
-    if (m_player->won()) {
-        //TODO: bonus score
-        //increaseScore(2000+());
-        return GWSTATUS_FINISHED_LEVEL;
+    
+    for (auto it = m_actors.begin(); it != m_actors.end(); it ++)
+        if ((*it)->shouldBeRemoved()) {
+            //TODO: double check this part
+            delete *it;
+            m_actors.erase(it);
+        }
+    
+    if (shouldShowExit()) {
+        Actor *exit = *find_if(m_actors.begin(), m_actors.end(), [](Actor *a){  return a->getTypeID() == IID_EXIT;  });
+        // Assume there must be an exit
+        exit->setVisible(true);
     }
+    
+    // Reduce the bonus score
+    if (m_bonus > 0)
+        m_bonus --;
     
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -64,7 +103,6 @@ void StudentWorld::cleanUp() {
         delete m_actors.back();
         m_actors.pop_back();
     }
-    delete m_player;
 }
 
 StudentWorld::~StudentWorld() {
@@ -102,4 +140,10 @@ Actor* StudentWorld::getActor(int x, int y) const {
     if (it != m_actors.end())
         return *it;
     return nullptr;
+}
+
+bool StudentWorld::playerWon() const {
+    if (shouldShowExit() && m_player->getX() == m_exitLoc.first && m_player->getY() == m_exitLoc.second)
+        return true;
+    return false;
 }

@@ -30,12 +30,14 @@ public:
     
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
     Actor* getActor(int x, int y) const;
-    bool exitShown() const {  return m_exitShown;  }
+    bool shouldShowExit() const {  return m_currentJewels == m_totalJewels;  }
+    bool playerWon() const;
     
 private:
     Player *m_player;
     std::vector<Actor*> m_actors;
-    bool m_exitShown = false;
+    std::pair<int, int> m_exitLoc;
+    int m_bonus, m_score, m_currentJewels, m_totalJewels;
 };
 
 #endif // STUDENTWORLD_H_

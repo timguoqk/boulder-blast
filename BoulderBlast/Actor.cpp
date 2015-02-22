@@ -41,14 +41,14 @@ void Player::doSomething() {
     if (getWorld()->getKey(ch))
         switch (ch) {
             case KEY_PRESS_ESCAPE:
-                setDead();
+                setShouldBeRemoved();
                 break;
             case KEY_PRESS_SPACE:
             {
                 /*If the user pressed the space bar, then if the Player has any ammunition, the Player will fire a Bullet, which reduces their ammunition count by 1. To fire a Bullet, a new Bullet object must be added at the square immediately in front of the Player’s avatar, facing the same direction as the avatar. For example, if the Player is at x=10,y=7, facing upward, then the Bullet would be created at location x=10, y=8, facing upward. Every time the Player fires a bullet, your game MUST play the sound SOUND_PLAYER_FIRE (see the StudentWorld section of this document for details on how to play a sound).*/
-                if (m_ammu <= 0)
+                if (m_ammo <= 0)
                     break;
-                m_ammu --;
+                m_ammo --;
                 getWorld()->playSound(SOUND_PLAYER_FIRE);
                 // TODO: add bullet
 //                std::pair<int, int> loc = StudentWorld::locationAtDirection(getX(), getY(), getDirection());
@@ -74,9 +74,6 @@ void Player::doSomething() {
             default:
                 break;
         }
-    if (getWorld()->getActor(getX(), getY()) && getWorld()->getActor(getX(), getY())->getTypeID() == IID_EXIT && getWorld()->exitShown()) {
-        m_won = true;
-    }
 }
 
 void Player::attacked() {
@@ -84,7 +81,7 @@ void Player::attacked() {
         getWorld()->playSound(SOUND_PLAYER_IMPACT);
     else {
         getWorld()->playSound(SOUND_PLAYER_DIE);
-        setDead();
+        setShouldBeRemoved();
     }
 }
 
@@ -98,8 +95,13 @@ void Bullet::doSomething() {
         // There's something in the next block
         a->setHitPoints(a->getHitPoints() - 2);
         a->attacked();
-        setDead();
+        setShouldBeRemoved();
     }
     else
         moveTo(loc.first, loc.second);
+}
+
+bool Boulder::shouldBeRemoved() const {
+    //TODO: shouldBeRemoved code
+    return false;
 }
