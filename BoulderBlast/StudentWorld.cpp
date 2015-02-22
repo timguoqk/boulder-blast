@@ -15,6 +15,11 @@ GameWorld* createStudentWorld(string assetDir)
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
 
 int StudentWorld::init() {
+    // Init variables
+    m_bonus = 1000;
+    m_currentJewels = m_totalJewels = 0;
+    m_playerWon = false;
+    
     string curLevel = (getLevel() < 10) ? "level0"+to_string(getLevel())+".dat" : "level"+to_string(getLevel())+".dat";
     Level lev(assetDirectory());
     auto result = lev.loadLevel(curLevel);
@@ -32,27 +37,38 @@ int StudentWorld::init() {
                     m_player = new Player(i, j, this);
                     m_actors.push_back(m_player);
                     break;
-//                case Level::wall:
-//                    m_actors.push_back(new Wall(i, j, this));
-//                    break;
+                case Level::wall:
+                    m_actors.push_back(new Wall(i, j, this));
+                    break;
                 case Level::boulder:
                     m_actors.push_back(new Boulder(i, j, this));
                     break;
                 case Level::exit:
-                    m_exitLoc = pair<int, int>(i, j);
+                    m_actors.push_back(new Exit(i, j, this));
+                    break;
+                case Level::hole:
+                    m_actors.push_back(new Hole(i, j, this));
+                    break;
+                case Level::jewel:
+                    m_actors.push_back(new Jewel(i, j, this));
+                    m_totalJewels ++;
+                    break;
+                case Level::extra_life:
+                    m_actors.push_back(new ExtraLifeGoodie(i, j, this));
+                    break;
+                case Level::ammo:
+                    m_actors.push_back(new AmmoGoodie(i, j, this));
+                    break;
+                case Level::restore_health:
+                    m_actors.push_back(new RestoreHealthGoodie(i, j, this));
+                    break;
+                    
                 //TODO: other situations
                 default:
                     break;
             }
         }
     }
-    
-    // Init variables
-    m_bonus = 1000;
-    m_score = 0;
-    m_currentJewels = 0;
-    //TODO: del this line
-    m_totalJewels = 9999;
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -60,7 +76,7 @@ int StudentWorld::move() {
     // Update the stat text
     ostringstream oss;
     oss.fill('0');
-    oss << "Score: " << setw(7) << m_score << "  ";
+    oss << "Score: " << setw(7) << getScore() << "  ";
     oss << "Level: " << setw(2) << getLevel() << "  ";
     oss.fill(' ');
     oss << "Lives: " << setw(2) << getLives() << "  ";
@@ -78,7 +94,8 @@ int StudentWorld::move() {
             return GWSTATUS_PLAYER_DIED;
         }
         if (playerWon()) {
-            increaseScore(2000+m_bonus);
+            
+            increaseScore(m_bonus);
             return GWSTATUS_FINISHED_LEVEL;
         }
     }
@@ -91,12 +108,6 @@ int StudentWorld::move() {
         }
         else
             it ++;
-    }
-    
-    if (shouldShowExit()) {
-        Actor *exit = *find_if(m_actors.begin(), m_actors.end(), [](Actor *a){  return a->getTypeID() == IID_EXIT;  });
-        // Assume there must be an exit
-        exit->setVisible(true);
     }
     
     // Reduce the bonus score
@@ -145,13 +156,27 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
 
 Actor* StudentWorld::getActor(int x, int y) const {
     auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find actor at (x, y)
-    if (it != m_actors.end())
-        return *it;
-    return nullptr;
-}
+    if (it != m_actors.end()) {
+        // There're only few situations when more than one actors are in the same place, so here we declare the priority, instead of using a vector
+        auto it2 = find_if(it+1, m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find next actor at (x, y)
+        if (it2 == m_actors.end())
+            return *it;  // Only one actor
+        // TODO: add more situations, double check
+        switch ((*it)->getTypeID()) {
+                case IID_JEWEL:
+                case IID_EXTRA_LIFE:
+                case IID_AMMO:
+                case IID_RESTORE_HEALTH:
+                    // Do not return goodie, return player
+                case IID_HOLE:
+                    // Do not return hole
+                case IID_EXIT:
+                    // Do not return exit, return the player
+                    return *it2;
 
-bool StudentWorld::playerWon() const {
-    if (shouldShowExit() && m_player->getX() == m_exitLoc.first && m_player->getY() == m_exitLoc.second)
-        return true;
-    return false;
+                default:
+                    return *it;
+        }
+    }
+    return nullptr;
 }

@@ -126,3 +126,58 @@ bool Boulder::push(Direction dir) {
     // Cannot push, return false
     return false;
 }
+
+void Exit::doSomething() {
+    if (!m_exitShown && getWorld()->shouldShowExit()) {
+        // Show it if not shown already
+        setVisible(true);
+        getWorld()->playSound(SOUND_REVEAL_EXIT);
+    }
+    if (getWorld()->shouldShowExit() && getWorld()->getActor(getX(), getY())->getTypeID() == IID_PLAYER) {
+        getWorld()->playSound(SOUND_FINISHED_LEVEL);
+        getWorld()->increaseScore(2000);
+        
+    }
+}
+
+void Hole::doSomething() {
+    if (shouldBeRemoved())
+        return;
+    Actor *a = getWorld()->getActor(getX(), getY());
+    if (a->getTypeID() == IID_BOULDER) {
+        // On the same location with a boulder
+        setShouldBeRemoved();
+        a->setShouldBeRemoved();
+    }
+}
+
+void Goodie::doSomething() {
+    if (shouldBeRemoved())
+        return;
+    if (getWorld()->getActor(getX(), getY())->getTypeID() == IID_PLAYER) {
+        goodieEffects();
+        setShouldBeRemoved();
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+    }
+}
+
+void Jewel::goodieEffects() const {
+    getWorld()->increaseScore(50);
+    getWorld()->incCurrentJewels();
+}
+
+void ExtraLifeGoodie::goodieEffects() const {
+    getWorld()->increaseScore(1000);
+    getWorld()->incLives();
+}
+
+void RestoreHealthGoodie::goodieEffects() const {
+    getWorld()->increaseScore(500);
+    getWorld()->getPlayer()->setHitPoints(20);
+}
+
+void AmmoGoodie::goodieEffects() const {
+    getWorld()->increaseScore(100);
+    Player *p = getWorld()->getPlayer();
+    p->setAmmo(p->getAmmo()+20);
+}

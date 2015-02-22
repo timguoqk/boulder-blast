@@ -32,13 +32,15 @@ public:
     Actor* getActor(int x, int y) const;
     void addActor(Actor *a) {  m_actors.push_back(a);  }
     bool shouldShowExit() const {  return m_currentJewels == m_totalJewels;  }
-    bool playerWon() const;
-    
+    bool playerWon() const {  return m_playerWon;  }
+    void setPlayerWon() {  m_playerWon = true;  }
+    void incCurrentJewels() {  m_currentJewels ++;  }
+    Player* getPlayer() const {  return m_player;  }
 private:
     Player *m_player;
     std::vector<Actor*> m_actors;
-    std::pair<int, int> m_exitLoc;
-    int m_bonus, m_score, m_currentJewels, m_totalJewels;
+    int m_bonus, m_currentJewels, m_totalJewels;
+    bool m_playerWon;
 };
 
 #endif // STUDENTWORLD_H_
