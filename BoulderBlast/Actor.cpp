@@ -83,7 +83,6 @@ void Player::attacked() {
 }
 
 bool Bullet::check() {
-    // TODO: When there're multiple actors at the same place
     Actor *a = getWorld()->getActor(getX(), getY());
     if (a) {
         // There's something in the next block
@@ -99,7 +98,7 @@ bool Bullet::check() {
             case IID_ROBOT_FACTORY:
             case IID_WALL:
                 // Remove but do no damage
-                //TODO: Note: If a Bullet finds itself on a square with both a robot and a Factory, then the Bullet must damage the robot.
+                // Note: If a Bullet finds itself on a square with both a robot and a Factory, then the Bullet must damage the robot.
                 setShouldBeRemoved();
                 return false;
                 
@@ -122,7 +121,6 @@ void Bullet::doSomething() {
 
 bool Boulder::push(Direction dir) {
     auto loc = StudentWorld::locationAtDirection(getX(), getY(), dir);
-    // TODO: When there're multiple actors at the same place
     Actor *a = getWorld()->getActor(loc.first, loc.second);
     if (!a || a->getTypeID() == IID_HOLE) {
         moveTo(loc.first, loc.second);
@@ -141,6 +139,7 @@ void Exit::doSomething() {
     if (getWorld()->shouldShowExit() && getWorld()->getActor(getX(), getY())->getTypeID() == IID_PLAYER) {
         getWorld()->playSound(SOUND_FINISHED_LEVEL);
         getWorld()->increaseScore(2000);
+        getWorld()->setPlayerWon();
         
     }
 }

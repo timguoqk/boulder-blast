@@ -103,7 +103,7 @@ int StudentWorld::move() {
     oss << "Bonus: " << setw(4) << m_bonus;
     setGameStatText(oss.str());
     
-    // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
+    // Each actor takes action
     for (Actor *a : m_actors) {
         a->doSomething();
         if (m_player->shouldBeRemoved()){
@@ -178,7 +178,6 @@ Actor* StudentWorld::getActor(int x, int y) const {
         auto it2 = find_if(it+1, m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find next actor at (x, y)
         if (it2 == m_actors.end())
             return *it;  // Only one actor
-        // TODO: add more situations, double check
         switch ((*it)->getTypeID()) {
                 case IID_JEWEL:
                 case IID_EXTRA_LIFE:

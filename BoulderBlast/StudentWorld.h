@@ -13,7 +13,6 @@
 
 class Player;
 class Actor;
-class Player;
 
 class StudentWorld : public GameWorld
 {
