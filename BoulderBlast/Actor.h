@@ -3,6 +3,8 @@
 
 #include "GraphObject.h"
 #include "GameConstants.h"
+#include <unordered_map>
+#include <string>
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
@@ -15,7 +17,7 @@ public:
     Actor(int imageID, int startX, int startY, Direction dir, StudentWorld *world)
     :GraphObject(imageID, startX, startY, dir), m_world(world){  setVisible(true);  }
     virtual void doSomething() = 0;
-    virtual void attacked() = 0;
+    virtual void attacked() {  /* do nothing */  }
     virtual bool shouldBeRemoved() const {  return m_shouldBeRemoved || m_hitPoints <= 0;  }
     void setShouldBeRemoved() {  m_shouldBeRemoved = true;  }
     virtual int getTypeID() const = 0;
@@ -29,37 +31,29 @@ private:
     int m_hitPoints = 20;
 };
 
-class Attacker : public Actor {
-public:
-    Attacker(int imageID, int startX, int startY, Direction dir, StudentWorld *world)
-    :Actor(imageID, startX, startY, dir, world) {}
-    int getAmmo() const {  return m_ammo;  }
-    void setAmmo(int ammo) {  m_ammo = ammo;  }
-private:
-    int m_ammo = 20;
-};
-
 class Wall : public Actor {
 public:
     Wall(int startX, int startY, StudentWorld *world)
     :Actor(IID_WALL, startX, startY, none, world){}
     virtual void doSomething() {  /* do nothing */  }
-    virtual void attacked() {  /* do nothing */  }
     
     virtual int getTypeID() const {  return IID_WALL;  }
 };
 
-class Player : public Attacker {
+class Player : public Actor {
 public:
     Player(int startX, int startY, StudentWorld *world)
-    :Attacker(IID_PLAYER, startX, startY, right, world){}
+    :Actor(IID_PLAYER, startX, startY, right, world){}
     virtual void doSomething();
     virtual void attacked();
+    int getAmmo() const {  return m_ammo;  }
+    void setAmmo(int ammo) {  m_ammo = ammo;  }
     
     void moveIfPossible(int x, int y);
     virtual int getTypeID() const {  return IID_PLAYER;  }
     
 private:
+    int m_ammo = 20;
 };
 
 class Boulder : public Actor {
@@ -67,7 +61,6 @@ public:
     Boulder(int startX, int startY, StudentWorld *world)
     :Actor(IID_BOULDER, startX, startY, none, world) {  setHitPoints(10);  }
     virtual void doSomething() {  /* do nothing */  }
-    virtual void attacked() {  /* do nothing */  }
     virtual int getTypeID() const {  return IID_BOULDER;  }
     bool push(Direction dir);
 
@@ -78,7 +71,6 @@ public:
     Bullet(int startX, int startY, Direction dir, StudentWorld *world)
     :Actor(IID_BULLET, startX, startY, dir, world){}
     virtual void doSomething();
-    virtual void attacked() {  /* do nothing */  }
     virtual int getTypeID() const {  return IID_BULLET;  }
 private:
     bool check();
@@ -89,7 +81,6 @@ public:
     Exit(int startX, int startY, StudentWorld *world)
     :Actor(IID_EXIT, startX, startY, none, world){  setVisible(false);  }
     virtual void doSomething();
-    virtual void attacked() {  /* do nothing */  }
     
     virtual int getTypeID() const {  return IID_EXIT;  }
 private:
@@ -101,7 +92,6 @@ public:
     Hole(int startX, int startY, StudentWorld *world)
     :Actor(IID_HOLE, startX, startY, none, world){}
     virtual void doSomething();
-    virtual void attacked() {  /* do nothing */  }
     
     virtual int getTypeID() const {  return IID_HOLE;  }
 };
@@ -111,7 +101,6 @@ public:
     Goodie(int imageID, int startX, int startY, StudentWorld *world)
     :Actor(imageID, startX, startY, none, world){}
     virtual void doSomething();
-    virtual void attacked() {  /* Goodies can’t be attacked */  }
     virtual void goodieEffects() const = 0;  // Abstract methods, to be implemented by subclass
     
     virtual int getTypeID() const = 0;
@@ -153,4 +142,44 @@ public:
     
     virtual int getTypeID() const {  return IID_EXTRA_LIFE;  }
 };
+
+class Bot : public Actor {
+public:
+    Bot(int imageID, int startX, int startY, Direction dir, int hitPoints,  StudentWorld *world);
+    virtual void doSomething();
+    virtual void attacked();
+    virtual void action() = 0;
+    
+    bool shouldAct();
+    bool fireIfPossible();
+    bool moveIfPossible();
+    virtual int getBonus() const = 0;
+    virtual void afterDeathAction() {  /* do nothing */  };
+private:
+    int m_ticks, m_ticksCount;
+};
+
+class SnarlBot : public Bot {
+public:
+    SnarlBot(int startX, int startY, bool isHorizontal,  StudentWorld *world)
+    :Bot(IID_SNARLBOT, startX, startY, isHorizontal ? right : down, 10, world){}
+    virtual int getTypeID() const {  return IID_SNARLBOT;  }
+    virtual void action();
+    
+    virtual int getBonus() const {  return 100;  }
+private:
+};
+
+class KleptoBot : public Bot {
+public:
+    KleptoBot(int startX, int startY, StudentWorld *world);
+    virtual int getTypeID() const {  return IID_KLEPTOBOT;  }
+    virtual void action();
+    virtual int getBonus() const {  return 10;  }
+    virtual void afterDeathAction();
+private:
+    int m_distanceBeforeTurning, m_count = 0, m_goodieType;
+    bool m_pickedUpGoodie = false;
+};
+
 #endif // ACTOR_H_

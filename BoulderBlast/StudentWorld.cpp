@@ -62,8 +62,15 @@ int StudentWorld::init() {
                 case Level::restore_health:
                     m_actors.push_back(new RestoreHealthGoodie(i, j, this));
                     break;
-                    
+                case Level::horiz_snarlbot:
+                    m_actors.push_back(new SnarlBot(i, j, true, this));
+                    break;
+                case Level::vert_snarlbot:
+                    m_actors.push_back(new SnarlBot(i, j, false, this));
+                    break;
                 //TODO: other situations
+                case Level::kleptobot_factory:
+                case Level::angry_kleptobot_factory:
                 default:
                     break;
             }
