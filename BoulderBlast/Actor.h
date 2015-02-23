@@ -179,7 +179,7 @@ public:
     virtual int getBonus() const {  return 10;  }
     virtual void afterDeathAction();
 private:
-    int m_distanceBeforeTurning, m_count = 0, m_goodieType;
+    int m_distanceBeforeTurning, m_count = 0, m_goodieType = -1;
     bool m_pickedUpGoodie = false;
 };
 

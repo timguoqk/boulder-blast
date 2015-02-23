@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -13,6 +15,13 @@ GameWorld* createStudentWorld(string assetDir)
 }
 
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
+
+StudentWorld::StudentWorld(std::string assetDir)
+: GameWorld(assetDir)
+{
+    // Seed the rand generator
+    srand((int)time(NULL));
+}
 
 int StudentWorld::init() {
     // Init variables
@@ -201,4 +210,8 @@ int StudentWorld::countKleptoBots(int x1, int x2, int y1, int y2) const {
     return (int)count_if(m_actors.begin(), m_actors.end(), [=](Actor *a){
         return ((a->getTypeID() == IID_KLEPTOBOT || a->getTypeID() == IID_ANGRY_KLEPTOBOT) && a->getX() >= x1 && a->getX() <= x2 && a->getY() >= y1 && a->getY() <= y2);
     });
+}
+
+int StudentWorld::randomNumber(int lowerbound, int upperbound) const {
+    return rand()%upperbound + lowerbound;
 }

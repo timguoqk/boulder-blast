@@ -18,11 +18,8 @@ class Player;
 class StudentWorld : public GameWorld
 {
 public:
-	StudentWorld(std::string assetDir)
-	 : GameWorld(assetDir)
-	{
-	}
-
+    StudentWorld(std::string assetDir);
+    
     virtual int init();
     virtual int move();
     virtual void cleanUp();
@@ -37,6 +34,8 @@ public:
     void incCurrentJewels() {  m_currentJewels ++;  }
     Player* getPlayer() const {  return m_player;  }
     int countKleptoBots(int x1, int x2, int y1, int y2) const;
+    // It's necessary to have a rand generator in studentworld class, since it can guarantee to seed rand only one
+    int randomNumber(int lowerbound, int upperbound) const;
 private:
     Player *m_player;
     std::vector<Actor*> m_actors;

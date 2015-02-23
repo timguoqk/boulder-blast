@@ -1,7 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
-#include <stdlib.h>
-#include <time.h>
+#include <iostream>
 #include <set>
 #include <algorithm>
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -281,6 +280,7 @@ bool Bot::moveIfPossible() {
             case IID_ANGRY_KLEPTOBOT:
             case IID_KLEPTOBOT:
             case IID_BOULDER:
+            case IID_PLAYER:
                 return false;
                 
             default:
@@ -335,21 +335,19 @@ void SnarlBot::action() {
 }
 KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world)
 :Bot(IID_KLEPTOBOT, startX, startY, right, 5, world) {
-    srand((int)time(NULL));
-    m_distanceBeforeTurning = rand()*6 + 1;
+    m_distanceBeforeTurning = getWorld()->randomNumber(1, 6);
 }
 
 void KleptoBot::action() {
     m_count ++;
     Goodie *a = dynamic_cast<Goodie *>( getWorld()->getActor(getX(), getY()));
-    srand((int)time(NULL));
-    if (!a && a->getTypeID() != IID_JEWEL) {
+    if (a && a->getTypeID() != IID_JEWEL) {
         /* Equivalent to
         case IID_RESTORE_HEALTH:
         case IID_EXTRA_LIFE:
         case IID_AMMO: */
         // 1 in 10 chance
-        if (rand()%10 == 0) {
+        if (getWorld()->randomNumber(1, 10) == 1) {
             m_goodieType = a->getTypeID();
             a->setShouldBeRemoved();
             getWorld()->playSound(SOUND_ROBOT_MUNCH);
@@ -360,13 +358,14 @@ void KleptoBot::action() {
         // The third situation, since the bot move already if possible
         m_count = 0;
         std::set<int> candidates;
+        // Four directions map to 1-4 in the Direction enum
         candidates.insert(1);
         candidates.insert(2);
         candidates.insert(3);
         candidates.insert(4);
-        int d = rand()%4 + 1;
-        // Four directions map to 1-4 in the Direction enum
-        while (!candidates.empty()) {
+        int d = getWorld()->randomNumber(1, 4);
+        // Since we'll delete one candidate at the end of the loop, we need to guarantee size() > 1
+        while (candidates.size() > 1) {
             auto loc = StudentWorld::locationAtDirection(getX(), getY(), static_cast<Direction>(d));
             bool canMove = true;
             if (auto ptr = getWorld()->getActor(loc.first, loc.second))
@@ -392,7 +391,7 @@ void KleptoBot::action() {
             candidates.erase(d);
             // Find next random number in candidates set
             auto it = candidates.begin();
-            advance(it, rand()%candidates.size());
+            advance(it, getWorld()->randomNumber(0, (int)candidates.size()));
             d = *it;
         }
         // There're obstacles in all directions, use the first d
@@ -413,17 +412,17 @@ void KleptoBot::afterDeathAction() {
             g = new ExtraLifeGoodie(getX(), getY(), getWorld());
             break;
         default:
-            break;
+            // hole no goodie, return!
+            return;
     }
     getWorld()->addActor(g);
 }
 
 void KleptoBotFactory::doSomething() {
     int numInSquare = getWorld()->countKleptoBots(getX()-3, getX()+3, getY()-3, getY()+3);
-    if (numInSquare < 3 && getWorld()->countKleptoBots(getX(), getX(), getY(), getY())) {
-        srand((int)time(NULL));
+    if (numInSquare < 3 && getWorld()->countKleptoBots(getX(), getX(), getY(), getY()) == 0) {
         // 1 in 50 chance
-        if (rand()%50 == 0) {
+        if (getWorld()->randomNumber(1, 50) == 1) {
             Actor *a;
             if (m_isAngry) {
                 //TODO: angry bot implementation
