@@ -217,8 +217,8 @@ bool Bot::fireIfPossible() {
         if ((p->getY() < getY() && getDirection() == down) || (p->getY() > getY() && getDirection() == up)) {
             // Set start, end
             start.first = end.first = getX();
-            start.second = MIN(getY(), p->getY());
-            end.second = MAX(getY(), p->getY());
+            start.second = MIN(getY(), p->getY()) + 1;
+            end.second = MAX(getY(), p->getY()) - 1;
         }
         else
             return false;
@@ -228,8 +228,8 @@ bool Bot::fireIfPossible() {
         if ((p->getX() < getX() && getDirection() == left) || (p->getX() > getX() && getDirection() == right)) {
             // Set start, end
             start.second = end.second = getY();
-            start.first = MIN(getX(), p->getX());
-            end.first = MAX(getX(), p->getX());
+            start.first = MIN(getX(), p->getX()) + 1;
+            end.first = MAX(getX(), p->getX()) - 1;
         }
         else
             return false;
@@ -239,9 +239,9 @@ bool Bot::fireIfPossible() {
         
     // Determine no obstacle
     //TODO: really +1?
-    for (int i = start.first + 1; i < end.first; i ++) {
-        for (int j = start.second + 1; i < end.second; j ++) {
-            Actor *a = getWorld()->getActor(getX(), i);
+    for (int i = start.first; i <= end.first; i ++) {
+        for (int j = start.second; j <= end.second; j ++) {
+            Actor *a = getWorld()->getActor(i, j);
             if (!a)
                 continue; // No actors
             
@@ -291,7 +291,7 @@ bool Bot::moveIfPossible() {
 }
 
 void Bot::doSomething() {
-    if (shouldBeRemoved() || shouldAct())
+    if (shouldBeRemoved() || !shouldAct())
         return;
     action();
 }
