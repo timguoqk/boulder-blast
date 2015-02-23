@@ -8,8 +8,6 @@
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
-//TODO: destructors?
-
 class StudentWorld;
 
 class Actor : public GraphObject {
@@ -170,7 +168,6 @@ public:
 private:
 };
 
-//TODO: email and ask if it's OK
 class KleptoBot : public Bot {
 public:
     KleptoBot(int startX, int startY, StudentWorld *world);

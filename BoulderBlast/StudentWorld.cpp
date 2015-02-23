@@ -36,9 +36,8 @@ int StudentWorld::init() {
         return GWSTATUS_LEVEL_ERROR;
     if (result == Level::load_fail_file_not_found || getLevel() > 99)
         return GWSTATUS_PLAYER_WON;
-    //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
     
-    //TODO: what if the level is illegal?
+    //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
     for (int i=0; i<VIEW_WIDTH; i++) {
         for (int j=0; j<VIEW_HEIGHT; j++) {
             switch (lev.getContentsOf(i, j)) {
@@ -77,7 +76,6 @@ int StudentWorld::init() {
                 case Level::vert_snarlbot:
                     m_actors.push_back(new SnarlBot(i, j, false, this));
                     break;
-                //TODO: other situations
                 case Level::kleptobot_factory:
                     m_actors.push_back(new KleptoBotFactory(i, j, false, this));
                     break;
@@ -108,7 +106,6 @@ int StudentWorld::move() {
     
     // This code is here merely to allow the game to build, run, and terminate after hitting enter a few times
     for (Actor *a : m_actors) {
-        //TODO: OK to assume all actors are active?
         a->doSomething();
         if (m_player->shouldBeRemoved()){
             decLives();

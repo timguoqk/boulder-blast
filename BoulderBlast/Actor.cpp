@@ -227,7 +227,7 @@ bool Bot::fireIfPossible() {
         if ((p->getX() < getX() && getDirection() == left) || (p->getX() > getX() && getDirection() == right)) {
             // Set start, end
             start.second = end.second = getY();
-            start.first = MIN(getX(), p->getX()) + 1;
+            start.first = MIN(getX(), p->getX()) + 1;  // Exclude the actor itself, of course
             end.first = MAX(getX(), p->getX()) - 1;
         }
         else
@@ -237,7 +237,6 @@ bool Bot::fireIfPossible() {
         return false;  // Dosen't match at all
         
     // Determine no obstacle
-    //TODO: really +1?
     for (int i = start.first; i <= end.first; i ++) {
         for (int j = start.second; j <= end.second; j ++) {
             Actor *a = getWorld()->getActor(i, j);
@@ -412,7 +411,7 @@ void KleptoBot::afterDeathAction() {
             g = new ExtraLifeGoodie(getX(), getY(), getWorld());
             break;
         default:
-            // hole no goodie, return!
+            // Holds no goodie, return!
             return;
     }
     getWorld()->addActor(g);
