@@ -80,8 +80,7 @@ int StudentWorld::init() {
                     m_actors.push_back(new KleptoBotFactory(i, j, false, this));
                     break;
                 case Level::angry_kleptobot_factory:
-#warning uncomment  this!
-//                    m_actors.push_back(new KleptoBotFactory(i, j, true, this));
+                    m_actors.push_back(new KleptoBotFactory(i, j, true, this));
                     break;
                 default:
                     break;

@@ -332,13 +332,18 @@ void SnarlBot::action() {
     }
 
 }
-KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world)
-:Bot(IID_KLEPTOBOT, startX, startY, right, 5, world) {
+KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world, bool isAngry = false)
+:Bot(IID_KLEPTOBOT, startX, startY, right, 5, world), m_isAngry(isAngry) {
     m_distanceBeforeTurning = getWorld()->randomNumber(1, 6);
 }
 
 void KleptoBot::action() {
     m_count ++;
+    
+    // Fire if possible, if angry
+    if (m_isAngry && fireIfPossible())
+        return;  // Fire already, end of the move
+    
     Goodie *a = dynamic_cast<Goodie *>( getWorld()->getActor(getX(), getY()));
     if (a && a->getTypeID() != IID_JEWEL) {
         /* Equivalent to
@@ -423,12 +428,10 @@ void KleptoBotFactory::doSomething() {
         // 1 in 50 chance
         if (getWorld()->randomNumber(1, 50) == 1) {
             Actor *a;
-            if (m_isAngry) {
-                //TODO: angry bot implementation
-            }
-            else {
+            if (m_isAngry)
+                a = new KleptoBot(getX(), getY(), getWorld(), true);  // Angry bot
+            else
                 a = new KleptoBot(getX(), getY(), getWorld());
-            }
             getWorld()->playSound(SOUND_ROBOT_BORN);
             getWorld()->addActor(a);
         }

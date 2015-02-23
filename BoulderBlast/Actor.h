@@ -170,14 +170,14 @@ private:
 
 class KleptoBot : public Bot {
 public:
-    KleptoBot(int startX, int startY, StudentWorld *world);
+    KleptoBot(int startX, int startY, StudentWorld *world, bool isAngry);
     virtual int getTypeID() const {  return IID_KLEPTOBOT;  }
     virtual void action();
     virtual int getBonus() const {  return 10;  }
     virtual void afterDeathAction();
 private:
     int m_distanceBeforeTurning, m_count = 0, m_goodieType = -1;
-    bool m_pickedUpGoodie = false;
+    bool m_pickedUpGoodie = false, m_isAngry;
 };
 
 class KleptoBotFactory : public Actor {
