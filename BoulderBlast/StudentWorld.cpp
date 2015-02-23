@@ -70,7 +70,12 @@ int StudentWorld::init() {
                     break;
                 //TODO: other situations
                 case Level::kleptobot_factory:
+                    m_actors.push_back(new KleptoBotFactory(i, j, false, this));
+                    break;
                 case Level::angry_kleptobot_factory:
+#warning uncomment  this!
+//                    m_actors.push_back(new KleptoBotFactory(i, j, true, this));
+                    break;
                 default:
                     break;
             }
@@ -179,6 +184,8 @@ Actor* StudentWorld::getActor(int x, int y) const {
                     // Do not return hole
                 case IID_EXIT:
                     // Do not return exit, return the player
+                case IID_ROBOT_FACTORY:
+                    // Do not return factory, return the bot
                     return *it2;
 
                 default:
@@ -186,4 +193,12 @@ Actor* StudentWorld::getActor(int x, int y) const {
         }
     }
     return nullptr;
+}
+
+int StudentWorld::countKleptoBots(int x1, int x2, int y1, int y2) const {
+    // Coordinates are inclusive
+    // Use count_if in algorithm and lambda to count
+    return (int)count_if(m_actors.begin(), m_actors.end(), [=](Actor *a){
+        return ((a->getTypeID() == IID_KLEPTOBOT || a->getTypeID() == IID_ANGRY_KLEPTOBOT) && a->getX() >= x1 && a->getX() <= x2 && a->getY() >= y1 && a->getY() <= y2);
+    });
 }

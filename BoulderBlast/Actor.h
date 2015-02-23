@@ -170,6 +170,7 @@ public:
 private:
 };
 
+//TODO: email and ask if it's OK
 class KleptoBot : public Bot {
 public:
     KleptoBot(int startX, int startY, StudentWorld *world);
@@ -180,6 +181,17 @@ public:
 private:
     int m_distanceBeforeTurning, m_count = 0, m_goodieType;
     bool m_pickedUpGoodie = false;
+};
+
+class KleptoBotFactory : public Actor {
+public:
+    KleptoBotFactory(int startX, int startY, bool isAngry, StudentWorld *world)
+    :Actor(IID_ROBOT_FACTORY, startX, startY, none, world), m_isAngry(isAngry){}
+    virtual void doSomething();
+    
+    virtual int getTypeID() const {  return IID_WALL;  }
+private:
+    int m_isAngry;
 };
 
 #endif // ACTOR_H_

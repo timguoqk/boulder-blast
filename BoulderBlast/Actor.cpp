@@ -417,3 +417,22 @@ void KleptoBot::afterDeathAction() {
     }
     getWorld()->addActor(g);
 }
+
+void KleptoBotFactory::doSomething() {
+    int numInSquare = getWorld()->countKleptoBots(getX()-3, getX()+3, getY()-3, getY()+3);
+    if (numInSquare < 3 && getWorld()->countKleptoBots(getX(), getX(), getY(), getY())) {
+        srand((int)time(NULL));
+        // 1 in 50 chance
+        if (rand()%50 == 0) {
+            Actor *a;
+            if (m_isAngry) {
+                //TODO: angry bot implementation
+            }
+            else {
+                a = new KleptoBot(getX(), getY(), getWorld());
+            }
+            getWorld()->playSound(SOUND_ROBOT_BORN);
+            getWorld()->addActor(a);
+        }
+    }
+}

@@ -36,6 +36,7 @@ public:
     void setPlayerWon() {  m_playerWon = true;  }
     void incCurrentJewels() {  m_currentJewels ++;  }
     Player* getPlayer() const {  return m_player;  }
+    int countKleptoBots(int x1, int x2, int y1, int y2) const;
 private:
     Player *m_player;
     std::vector<Actor*> m_actors;
