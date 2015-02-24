@@ -37,7 +37,7 @@ int StudentWorld::init() {
     if (result == Level::load_fail_file_not_found || getLevel() > 99)
         return GWSTATUS_PLAYER_WON;
     
-    //getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
+    // getContentsOf() method takes the column parameter (x) first, then the row parameter (y) second.
     for (int i=0; i<VIEW_WIDTH; i++) {
         for (int j=0; j<VIEW_HEIGHT; j++) {
             switch (lev.getContentsOf(i, j)) {
@@ -104,8 +104,9 @@ int StudentWorld::move() {
     setGameStatText(oss.str());
     
     // Each actor takes action
-    for (Actor *a : m_actors) {
-        a->doSomething();
+//    for (Actor *a : m_actors) {
+    for (auto it = m_actors.begin(); it != m_actors.end(); it ++) {
+        (*it)->doSomething();
         if (m_player->shouldBeRemoved()){
             decLives();
             return GWSTATUS_PLAYER_DIED;
