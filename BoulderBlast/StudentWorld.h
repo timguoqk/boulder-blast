@@ -26,7 +26,7 @@ public:
     
     static std::pair<int, int> locationAtDirection(int x, int y, GraphObject::Direction d);
     Actor* getActor(int x, int y) const;
-    void addActor(Actor *a) {  m_actors.push_back(a);  }
+    void addActor(Actor *a) {  m_pendingActors.push_back(a);  }
     bool shouldShowExit() const {  return m_currentJewels == m_totalJewels;  }
     bool playerWon() const {  return m_playerWon;  }
     void setPlayerWon() {  m_playerWon = true;  }
@@ -37,7 +37,7 @@ public:
     int randomNumber(int lowerbound, int upperbound) const;
 private:
     Player *m_player;
-    std::vector<Actor*> m_actors;
+    std::vector<Actor*> m_actors, m_pendingActors;
     int m_bonus, m_currentJewels, m_totalJewels;
     bool m_playerWon;
 };

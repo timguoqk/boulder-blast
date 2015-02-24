@@ -127,6 +127,11 @@ int StudentWorld::move() {
             it ++;
     }
     
+    // Add pending actors
+    m_actors.insert(m_actors.end(), m_pendingActors.begin(), m_pendingActors.end());
+    // Clear the pending actors
+    m_pendingActors.clear();
+    
     // Reduce the bonus score
     if (m_bonus > 0)
         m_bonus --;
@@ -139,6 +144,10 @@ void StudentWorld::cleanUp() {
         delete m_actors.back();
         m_actors.pop_back();
     }
+    while (!m_pendingActors.empty()) {
+        delete m_pendingActors.back();
+        m_pendingActors.pop_back();
+    }
 }
 
 StudentWorld::~StudentWorld() {
@@ -147,7 +156,10 @@ StudentWorld::~StudentWorld() {
         delete m_actors.back();
         m_actors.pop_back();
     }
-    delete m_player;
+    while (!m_pendingActors.empty()) {
+        delete m_pendingActors.back();
+        m_pendingActors.pop_back();
+    }
 }
 
 pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Direction d) {
