@@ -331,19 +331,13 @@ void SnarlBot::action() {
     }
 
 }
-KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world, bool isAngry = false)
-:Bot(IID_KLEPTOBOT, startX, startY, right, 5, world), m_isAngry(isAngry) {
+KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world)
+:Bot(IID_KLEPTOBOT, startX, startY, right, 5, world) {
     m_distanceBeforeTurning = getWorld()->randomNumber(1, 6);
 }
 
 void KleptoBot::action() {
-    m_count ++;
-    
-    // Fire if possible, if angry
-    if (m_isAngry && fireIfPossible())
-        return;  // Fire already, end of the move
-    
-    Goodie *a = dynamic_cast<Goodie *>( getWorld()->getActor(getX(), getY()));
+    Goodie *a = dynamic_cast<Goodie *>(getWorld()->getActor(getX(), getY()));
     if (a && a->getTypeID() != IID_JEWEL) {
         /* Equivalent to
         case IID_RESTORE_HEALTH:
@@ -357,9 +351,14 @@ void KleptoBot::action() {
             return; // Do nothing more
         }
     }
-    if (m_count == m_distanceBeforeTurning || !moveIfPossible()){
+    
+    m_count ++;
+    // Note: add 1 because we increment m_count prematurely
+    if (m_count == m_distanceBeforeTurning+1 || !moveIfPossible()){
         // The third situation, since the bot move already if possible
         m_count = 0;
+        // Reset distanceBeforeTurning
+        m_distanceBeforeTurning = getWorld()->randomNumber(1, 6);
         std::set<int> candidates;
         // Four directions map to 1-4 in the Direction enum
         candidates.insert(1);
@@ -368,8 +367,9 @@ void KleptoBot::action() {
         candidates.insert(4);
         int d = getWorld()->randomNumber(1, 4);
         // Since we'll delete one candidate at the end of the loop, we need to guarantee size() > 1
+        int current_d = d;
         while (candidates.size() > 1) {
-            auto loc = StudentWorld::locationAtDirection(getX(), getY(), static_cast<Direction>(d));
+            auto loc = StudentWorld::locationAtDirection(getX(), getY(), static_cast<Direction>(current_d));
             bool canMove = true;
             if (auto ptr = getWorld()->getActor(loc.first, loc.second))
                 switch (ptr->getTypeID()) {
@@ -387,15 +387,15 @@ void KleptoBot::action() {
                         break;
                 }
             if (canMove) {
-                setDirection(static_cast<Direction>(d));
+                setDirection(static_cast<Direction>(current_d));
                 return;
             }
             
-            candidates.erase(d);
+            candidates.erase(current_d);
             // Find next random number in candidates set
             auto it = candidates.begin();
             advance(it, getWorld()->randomNumber(0, (int)candidates.size()));
-            d = *it;
+            current_d = *it;
         }
         // There're obstacles in all directions, use the first d
         setDirection(static_cast<Direction>(d));
@@ -421,14 +421,27 @@ void KleptoBot::afterDeathAction() {
     getWorld()->addActor(g);
 }
 
+void AngryKleptoBot::action() {
+    // Fire if possible, if angry
+    if (fireIfPossible())
+        return;  // Fire already, end of the move
+    
+    // Ordinary actions
+    KleptoBot::action();
+}
+
 void KleptoBotFactory::doSomething() {
+    /*
+    (int)count_if(m_actors.begin(), m_actors.end(), [=](Actor *a){
+        return ((a->getTypeID() == IID_KLEPTOBOT || a->getTypeID() == IID_ANGRY_KLEPTOBOT) && a->getX() >= x1 && a->getX() <= x2 && a->getY() >= y1 && a->getY() <= y2);
+    });*/
     int numInSquare = getWorld()->countKleptoBots(getX()-3, getX()+3, getY()-3, getY()+3);
     if (numInSquare < 3 && getWorld()->countKleptoBots(getX(), getX(), getY(), getY()) == 0) {
         // 1 in 50 chance
         if (getWorld()->randomNumber(1, 50) == 1) {
             Actor *a;
             if (m_isAngry)
-                a = new KleptoBot(getX(), getY(), getWorld(), true);  // Angry bot
+                a = new AngryKleptoBot(getX(), getY(), getWorld());  // Angry bot
             else
                 a = new KleptoBot(getX(), getY(), getWorld());
             getWorld()->playSound(SOUND_ROBOT_BORN);
