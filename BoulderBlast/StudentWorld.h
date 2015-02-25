@@ -36,6 +36,7 @@ public:
     int countKleptoBots(int x1, int x2, int y1, int y2) const;
     // It's necessary to have a rand generator in studentworld class, since it can guarantee to seed rand only one
     int randomNumber(int lowerbound, int upperbound) const;
+    Goodie* getGoodie(int x, int y) const;
 private:
     Player *m_player;
     std::vector<Actor*> m_actors, m_pendingActors;

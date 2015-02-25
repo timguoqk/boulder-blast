@@ -337,19 +337,13 @@ KleptoBot::KleptoBot(int startX, int startY, StudentWorld *world)
 }
 
 void KleptoBot::action() {
-    Goodie *a = dynamic_cast<Goodie *>(getWorld()->getActor(getX(), getY()));
-    if (a && a->getTypeID() != IID_JEWEL) {
-        /* Equivalent to
-        case IID_RESTORE_HEALTH:
-        case IID_EXTRA_LIFE:
-        case IID_AMMO: */
-        // 1 in 10 chance
-        if (getWorld()->randomNumber(1, 10) == 1) {
-            m_goodieType = a->getTypeID();
-            a->setShouldBeRemoved();
-            getWorld()->playSound(SOUND_ROBOT_MUNCH);
-            return; // Do nothing more
-        }
+    Goodie *a = getWorld()->getGoodie(getX(), getY());
+    if (a && getWorld()->randomNumber(1, 10) == 1) {
+        // 1 in 10 chance when there's a goodie
+        m_goodieType = a->getTypeID();
+        a->setShouldBeRemoved();
+        getWorld()->playSound(SOUND_ROBOT_MUNCH);
+        return; // Do nothing more
     }
     
     m_count ++;
@@ -431,10 +425,6 @@ void AngryKleptoBot::action() {
 }
 
 void KleptoBotFactory::doSomething() {
-    /*
-    (int)count_if(m_actors.begin(), m_actors.end(), [=](Actor *a){
-        return ((a->getTypeID() == IID_KLEPTOBOT || a->getTypeID() == IID_ANGRY_KLEPTOBOT) && a->getX() >= x1 && a->getX() <= x2 && a->getY() >= y1 && a->getY() <= y2);
-    });*/
     int numInSquare = getWorld()->countKleptoBots(getX()-3, getX()+3, getY()-3, getY()+3);
     if (numInSquare < 3 && getWorld()->countKleptoBots(getX(), getX(), getY(), getY()) == 0) {
         // 1 in 50 chance

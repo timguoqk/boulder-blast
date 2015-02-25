@@ -152,15 +152,7 @@ void StudentWorld::cleanUp() {
 }
 
 StudentWorld::~StudentWorld() {
-    //CAUTION: This code is identical to cleanUp()
-    while (!m_actors.empty()) {
-        delete m_actors.back();
-        m_actors.pop_back();
-    }
-    while (!m_pendingActors.empty()) {
-        delete m_pendingActors.back();
-        m_pendingActors.pop_back();
-    }
+    cleanUp();
 }
 
 pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Direction d) {
@@ -207,6 +199,23 @@ Actor* StudentWorld::getActor(int x, int y) const {
 
                 default:
                     return *it;
+        }
+    }
+    return nullptr;
+}
+
+Goodie* StudentWorld::getGoodie(int x, int y) const {
+    auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});
+    while (it != m_actors.end()) {
+        switch ((*it)->getTypeID()) {
+            case IID_EXTRA_LIFE:
+            case IID_AMMO:
+            case IID_RESTORE_HEALTH:
+                // Return the goodie
+                return dynamic_cast<Goodie *>(*it);
+                break;
+            default:
+                it = find_if(it+1, m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});
         }
     }
     return nullptr;
