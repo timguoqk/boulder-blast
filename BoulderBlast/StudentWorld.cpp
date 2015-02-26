@@ -106,9 +106,9 @@ int StudentWorld::move() {
     setGameStatText(oss.str());
     
     // Each actor takes action
-//    for (Actor *a : m_actors) {
-    for (auto it = m_actors.begin(); it != m_actors.end(); it ++) {
-        (*it)->doSomething();
+    int N = (int)m_actors.size(); // Only move actors that are currently alive
+    for (int i = 0; i < N; i ++) {
+        m_actors[i]->doSomething();
         if (m_player->shouldBeRemoved()){
             decLives();
             return GWSTATUS_PLAYER_DIED;
@@ -129,11 +129,6 @@ int StudentWorld::move() {
             it ++;
     }
     
-    // Add pending actors
-    m_actors.insert(m_actors.end(), m_pendingActors.begin(), m_pendingActors.end());
-    // Clear the pending actors
-    m_pendingActors.clear();
-    
     // Reduce the bonus score
     if (m_bonus > 0)
         m_bonus --;
@@ -145,10 +140,6 @@ void StudentWorld::cleanUp() {
     while (!m_actors.empty()) {
         delete m_actors.back();
         m_actors.pop_back();
-    }
-    while (!m_pendingActors.empty()) {
-        delete m_pendingActors.back();
-        m_pendingActors.pop_back();
     }
 }
 
