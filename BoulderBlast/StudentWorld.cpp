@@ -9,6 +9,8 @@
 #include <time.h>
 using namespace std;
 
+#define FIND_ACTOR_AT_X_Y find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;})
+
 GameWorld* createStudentWorld(string assetDir)
 {
 	return new StudentWorld(assetDir);
@@ -112,7 +114,6 @@ int StudentWorld::move() {
             return GWSTATUS_PLAYER_DIED;
         }
         if (playerWon()) {
-            
             increaseScore(m_bonus);
             return GWSTATUS_FINISHED_LEVEL;
         }
@@ -177,7 +178,7 @@ pair<int, int> StudentWorld::locationAtDirection(int x, int y, GraphObject::Dire
 }
 
 Actor* StudentWorld::getActor(int x, int y) const {
-    auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find actor at (x, y)
+    auto it = FIND_ACTOR_AT_X_Y;  // Find actor at (x, y)
     if (it != m_actors.end()) {
         // There're only few situations when more than one actors are in the same place, so here we declare the priority, instead of using a vector
         auto it2 = find_if(it+1, m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});  // Find next actor at (x, y)
@@ -205,7 +206,7 @@ Actor* StudentWorld::getActor(int x, int y) const {
 }
 
 Goodie* StudentWorld::getGoodie(int x, int y) const {
-    auto it = find_if(m_actors.begin(), m_actors.end(), [x, y](Actor *a){return a->getX() == x && a->getY() == y;});
+    auto it = FIND_ACTOR_AT_X_Y;
     while (it != m_actors.end()) {
         switch ((*it)->getTypeID()) {
             case IID_EXTRA_LIFE:
