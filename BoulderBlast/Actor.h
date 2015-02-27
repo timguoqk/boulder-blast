@@ -47,10 +47,10 @@ public:
     int getAmmo() const {  return m_ammo;  }
     void setAmmo(int ammo) {  m_ammo = ammo;  }
     
-    void moveIfPossible(int x, int y);
     virtual int getTypeID() const {  return IID_PLAYER;  }
     
 private:
+    void moveIfPossible(int x, int y);
     int m_ammo = 20;
 };
 
@@ -99,9 +99,8 @@ public:
     Goodie(int imageID, int startX, int startY, StudentWorld *world)
     :Actor(imageID, startX, startY, none, world){}
     virtual void doSomething();
+protected:
     virtual void goodieEffects() const = 0;  // Abstract methods, to be implemented by subclass
-    
-    virtual int getTypeID() const = 0;
 };
 
 
@@ -109,36 +108,36 @@ class Jewel : public Goodie {
 public:
     Jewel(int startX, int startY, StudentWorld *world)
     :Goodie(IID_JEWEL, startX, startY, world){}
-    virtual void goodieEffects() const;
-    
     virtual int getTypeID() const {  return IID_JEWEL;  }
+protected:
+    virtual void goodieEffects() const;
 };
 
 class RestoreHealthGoodie : public Goodie {
 public:
     RestoreHealthGoodie(int startX, int startY, StudentWorld *world)
     :Goodie(IID_RESTORE_HEALTH, startX, startY, world){}
-    virtual void goodieEffects() const;
-    
     virtual int getTypeID() const {  return IID_RESTORE_HEALTH;  }
+protected:
+    virtual void goodieEffects() const;
 };
 
 class AmmoGoodie : public Goodie {
 public:
     AmmoGoodie(int startX, int startY, StudentWorld *world)
     :Goodie(IID_AMMO, startX, startY, world){}
-    virtual void goodieEffects() const;
-    
     virtual int getTypeID() const {  return IID_AMMO;  }
+protected:
+    virtual void goodieEffects() const;
 };
 
 class ExtraLifeGoodie : public Goodie {
 public:
     ExtraLifeGoodie(int startX, int startY, StudentWorld *world)
     :Goodie(IID_EXTRA_LIFE, startX, startY, world){}
-    virtual void goodieEffects() const;
-    
     virtual int getTypeID() const {  return IID_EXTRA_LIFE;  }
+protected:
+    virtual void goodieEffects() const;
 };
 
 class Bot : public Actor {
@@ -146,6 +145,7 @@ public:
     Bot(int imageID, int startX, int startY, Direction dir, int hitPoints,  StudentWorld *world);
     virtual void doSomething();
     virtual void attacked();
+protected:
     virtual void action() = 0;
     
     bool shouldAct();
@@ -162,6 +162,7 @@ public:
     SnarlBot(int startX, int startY, bool isHorizontal,  StudentWorld *world)
     :Bot(IID_SNARLBOT, startX, startY, isHorizontal ? right : down, 10, world){}
     virtual int getTypeID() const {  return IID_SNARLBOT;  }
+protected:
     virtual void action();
     
     virtual int getBonus() const {  return 100;  }
@@ -172,6 +173,7 @@ class KleptoBot : public Bot {
 public:
     KleptoBot(int startX, int startY, StudentWorld *world);
     virtual int getTypeID() const {  return IID_KLEPTOBOT;  }
+protected:
     virtual void action();
     virtual int getBonus() const {  return 10;  }
     virtual void afterDeathAction();
@@ -185,6 +187,7 @@ public:
     AngryKleptoBot(int startX, int startY, StudentWorld *world)
     :KleptoBot(startX, startY, world){}
     virtual int getTypeID() const {  return IID_ANGRY_KLEPTOBOT;  }
+protected:
     virtual void action();
     virtual int getBonus() const {  return 20;  }
 private:
