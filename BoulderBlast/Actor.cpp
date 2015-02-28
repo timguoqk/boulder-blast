@@ -137,7 +137,6 @@ void Exit::doSomething() {
         m_exitShown = true;
         getWorld()->playSound(SOUND_REVEAL_EXIT);
     }
-    //TODO: If the last jewel is on the same spot
     if (getWorld()->shouldShowExit() && getWorld()->getActor(getX(), getY())->getTypeID() == IID_PLAYER) {
         getWorld()->playSound(SOUND_FINISHED_LEVEL);
         getWorld()->increaseScore(2000);

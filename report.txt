@@ -180,19 +180,45 @@ When there're more than one goodies, only consider picking up one of them.
 4. A description of how you tested each of your classes (1-2 paragraphs per class).
 
 # class Actor
+	It's the base class, so I just test to make sure the GraphObject is presented correctly, and test the rest of functionalities in its subclasses.
 # class Wall
+	Make sure no actor can go over it. So basically it's tested in the process of testing other actors
 # class Player
+	Move the actor around to make sure it won't go through walls, holes, etc.
+	Fire the bullet.
 # class Boulder
+	Move the boulder around and make sure it can only interact with hole, especially can't be on the same spot as the exit.
+	Make sure 5 bullets can destoy a boulder.
 # class Bullet
+	Fire it in all directions, by both bot and player.
+	Make sure it only hit valid targets, and won't cause wall to disappear after several shots.
 # class Exit
+	Make sure the exit is not shown on map, and appear after the player collects , and play the right sound once.
+	Collect the last jewell when a bot is at the same spot as the exit, and see if everything still goes smoothly.
 # class Hole
+	Make sure bullet can go through, while other actors can't.
+	Make sure the hole disappears after the player push a boulder into it.
 # class Goodie
+	It's an abstract base class. I test it by testing its subclasses.
 # class Jewel
+	Make sure it can add right amount of score once collected by player.
 # class RestoreHealthGoodie
+	Make sure it can add right amount of score and restore health once collected by player.
 # class AmmoGoodie
+	Make sure it can add right amount of score and add right amount of ammos once collected by player.
 # class ExtraLifeGoodie
+	Make sure it can add right amount of score and add right amount of lives once collected by player.
 # class Bot
+	It's a base class. I test it by testing its subclasses.
 # class SnarlBot
+	Make sure the two different types (horizontal/vertical) works differently while having the same pattern, hit points, etc. 
+	Set breakpoint to check wheather it does something every frame or not. Move the player around, see if it fires when necessary.
 # class KleptoBot
+	Wait to see if it can pick up goodie. Then kill it to see if it drops correctly (the correct goodie, the correct location and the correct sound.)
+
 # class AngryKleptoBot
+	Test it like a Kleptobot.
+	Test if it can also fire, using the same procedure as SnarlBot.
 # class KleptoBotFactory
+	Test if it manufactures the right bot using break point and debugger.
+	Test that it will stop only when certain conditions outlined in spec are met. Also make sure it's not destroyable (though bullet can hit it) by firing at the factory.
