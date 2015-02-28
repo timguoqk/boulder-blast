@@ -38,14 +38,14 @@
 ## getTypeID
 	Return its identity as a player. Clearly it should not be pure virtual.
 ## doSomething
-	Do what it should do, as described in the spec. Clearly it should not be pure virtual.
+	Do what it should do, as described in the spec. (Get the key user pressed, move to the specified firection, fire or do nothing accordingly.) Clearly it should not be pure virtual.
 ## attacked
-	Play the right sound for the current hit point level of player.
+	Play the right sound (died sound if dead impact sound otherwise) for the current hit point level of player.
 	Clearly it should not be pure virtual.
 ## getAmmo, setAmmo
 	Useful trivial accessor function. Thus just virtual.
 ## moveIfPossible
-	Move towards its current direction is possible. (Also push the boulder if necessary.)
+	Move towards its current direction is possible (not blocked by robot, wall, hole or factory). (Also push the boulder if necessary.)
 	Clearly it should not be pure virtual.
 
 # class Boulder
@@ -55,9 +55,9 @@
 ## getTypeID
 	Return its identity as a boulder. Clearly it should not be pure virtual.
 ## doSomething
-	Do what it should do, as described in the spec. Clearly it should not be pure virtual.
+	Do nothing. Clearly it should not be pure virtual.
 ## push
-	Try to push the boulder in the specified direction. Return true if succeed, false otherwise. Clearly it should not be pure virtual.
+	Return true and move itself towards the specified direction if not blocked, return false otherwise. Clearly it should not be pure virtual.
 
 # class Bullet
 ## Constructor
@@ -66,9 +66,7 @@
 ## getTypeID
 	Return its identity as a bullet. Clearly it should not be pure virtual.
 ## doSomething
-	Do what it should do, as described in the spec. Clearly it should not be pure virtual.
-## push
-	Try to push the boulder in the specified direction. Return true if succeed, false otherwise. Clearly it should not be pure virtual.
+	Check if it can move forward. Move forward and check check again. If it fails in any of the checks, destroy itself and cause damages. Clearly it should not be pure virtual. Clearly it should not be pure virtual.
 
 # class Exit
 ## Constructor
@@ -77,7 +75,7 @@
 ## getTypeID
 	Return its identity as an exit. Clearly it should not be pure virtual.
 ## doSomething
-	Do what it should do, as described in the spec. Clearly it should not be pure virtual.
+	Check if the player collects all the jewels and the exit is not shown, show the exit then. If the exit is shown and the player is on the same spot, tell StudentWorld the player won the current level. Clearly it should not be pure virtual.
 
 # class Hole
 ## Constructor
@@ -86,7 +84,7 @@
 ## getTypeID
 	Return its identity as a hole. Clearly it should not be pure virtual.
 ## doSomething
-	Do what it should do, as described in the spec. Clearly it should not be pure virtual.
+	Do nothing. Clearly it should not be pure virtual.
 
 # class Goodie
 ## Constructor
