@@ -84,7 +84,7 @@ void Player::attacked() {
 
 bool Bullet::check() {
     Actor *a = getWorld()->getActor(getX(), getY());
-    if (a) {
+    if (a->getTypeID() != IID_BULLET) {
         // There's something in the next block
         switch (a->getTypeID()) {
             case IID_BOULDER:

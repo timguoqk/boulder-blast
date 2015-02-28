@@ -199,7 +199,7 @@ public:
     :Actor(IID_ROBOT_FACTORY, startX, startY, none, world), m_isAngry(isAngry){}
     virtual void doSomething();
     
-    virtual int getTypeID() const {  return IID_WALL;  }
+    virtual int getTypeID() const {  return IID_ROBOT_FACTORY;  }
 private:
     int m_isAngry;
 };

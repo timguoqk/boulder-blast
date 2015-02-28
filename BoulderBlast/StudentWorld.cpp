@@ -176,6 +176,7 @@ Actor* StudentWorld::getActor(int x, int y) const {
         if (it2 == m_actors.end())
             return *it;  // Only one actor
         switch ((*it)->getTypeID()) {
+                case IID_BULLET: // Do not return bullet
                 case IID_JEWEL:
                 case IID_EXTRA_LIFE:
                 case IID_AMMO:
@@ -185,9 +186,13 @@ Actor* StudentWorld::getActor(int x, int y) const {
                     // Do not return hole
                 case IID_EXIT:
                     // Do not return exit, return the player
-                case IID_ROBOT_FACTORY:
-                    // Do not return factory, return the bot
                     return *it2;
+                case IID_ROBOT_FACTORY:
+                    // When bullet hits factory
+                    if ((*it2)->getTypeID() == IID_BULLET)
+                        return *it;
+                    return *it2;
+
 
                 default:
                     return *it;
