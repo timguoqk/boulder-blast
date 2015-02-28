@@ -2,14 +2,14 @@
 
 # class Actor
 ## Constructor
-	Constuct the actor given its IID, location, direction and the world it belongs to.
+	Construct the actor given its IID, location, direction and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## doSomething
-    Do something.
-    Each actor is required to have a doSomething function and their actions are widely different, making it impossible to implement in the base class. So I have this function as a virtual and abstract function.
+	A pure virtual function.
+    Each actor is required to have a doSomething function and their actions are widely different, making it impossible to implement in the base class. So I have this function as a pure virtual function.
 ## attacked
     Actions that take place after the player is attacked.
-    Most actors have actions when they are attacked, so it's handy to have such function. Since quite a lot of actors do nothing when attacked, so this is a virutal function with empty function body, rather than a pure virtual function that requires every subclass to implement.
+    Most actors have actions when they are attacked, so it's handy to have such function. Since quite a lot of actors do nothing when attacked, so this is a virtual function with empty function body, rather than a pure virtual function that requires every subclass to implement.
 ## shouldBeRemoved
     Return true if should be removed.
     It's very important to know if an actor should be removed. Every actor should be removed either if (1) some action force them to be removed (2) their hit points = 0. Since there's a common logic, I make it just virtual.
@@ -24,7 +24,7 @@
 
 # class Wall
 ## Constructor
-	Constuct the wall given its location and the world it belongs to.
+	Construct the wall given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a wall. Clearly it should not be pure virtual.
@@ -33,7 +33,7 @@
 
 # class Player
 ## Constructor
-	Constuct the player given its location and the world it belongs to.
+	Construct the player given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a player. Clearly it should not be pure virtual.
@@ -50,7 +50,7 @@
 
 # class Boulder
 ## Constructor
-	Constuct the boulder given its location and the world it belongs to.
+	Construct the boulder given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a boulder. Clearly it should not be pure virtual.
@@ -61,7 +61,7 @@
 
 # class Bullet
 ## Constructor
-	Constuct the bullet given its location, direction and the world it belongs to.
+	Construct the bullet given its location, direction and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a bullet. Clearly it should not be pure virtual.
@@ -72,7 +72,7 @@
 
 # class Exit
 ## Constructor
-	Constuct the exit given its location and the world it belongs to.
+	Construct the exit given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as an exit. Clearly it should not be pure virtual.
@@ -81,7 +81,7 @@
 
 # class Hole
 ## Constructor
-	Constuct the hole given its location and the world it belongs to.
+	Construct the hole given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a hole. Clearly it should not be pure virtual.
@@ -90,43 +90,43 @@
 
 # class Goodie
 ## Constructor
-	Constuct the goodie given its imageID, location and the world it belongs to.
+	Construct the goodie given its imageID, location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## doSomething
-	The virtual function that provides the basice function as a goodie (determines if it is still active, play sound and have certain effect if the player is on the same spot). Clearly it should not be pure virtual.
+	The virtual function that provides the basic function as a goodie (determines if it is still active, play sound and have certain effect if the player is on the same spot). Clearly it should not be pure virtual.
 
 
 # class Jewel
 ## Constructor
-	Constuct the jewel given its location and the world it belongs to.
+	Construct the jewel given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a jewel. Clearly it should not be pure virtual.
 
 # class RestoreHealthGoodie
 ## Constructor
-	Constuct the restore health goodie given its location and the world it belongs to.
+	Construct the restore health goodie given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a restore health goodie. Clearly it should not be pure virtual.
 
 # class AmmoGoodie
 ## Constructor
-	Constuct the ammo goodie given its location and the world it belongs to.
+	Construct the ammo goodie given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as an ammo goodie. Clearly it should not be pure virtual.
 
 # class ExtraLifeGoodie
 ## Constructor
-	Constuct the extra life goodie given its location and the world it belongs to.
+	Construct the extra life goodie given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as an extra life goodie. Clearly it should not be pure virtual.
 
 # class Bot
 ## Constructor
-	Constuct the bot given its imageID, location, direction and the world it belongs to.
+	Construct the bot given its imageID, location, direction and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a bot. Clearly it should not be pure virtual.
@@ -141,33 +141,68 @@
 
 # class SnarlBot
 ## Constructor
-	Constuct the SnarlBot given its location, type and the world it belongs to.
+	Construct the SnarlBot given its location, type and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a SnarlBot. Clearly it should not be pure virtual.
 
 # class KleptoBot
 ## Constructor
-	Constuct the KleptoBot given its location and the world it belongs to.
+	Construct the KleptoBot given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a KleptoBot. Clearly it should not be pure virtual.
 
 # class AngryKleptoBot
 ## Constructor
-	Constuct the AngryKleptoBot given its location and the world it belongs to.
+	Construct the AngryKleptoBot given its location and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a AngryKleptoBot. Clearly it should not be pure virtual.
 
 # class KleptoBotFactory
 ## Constructor
-	Constuct the factory given its location, type of bot producing and the world it belongs to.
+	Construct the factory given its location, type of bot producing and the world it belongs to.
 	Clearly it should not be virtual or pure virtual.
 ## getTypeID
 	Return its identity as a factory. Clearly it should not be pure virtual.
 ## doSomething
 	Produce the designated type of bot if it meets the condition outlined in the spec. Clearly it should not be pure virtual.
+
+# class StudentWorld
+## Constructor
+	Initialize GameWorld with given asset directory, also seed the rand generator.
+	Clearly it should not be pure virtual.
+## init
+	Initialize variables, load the map and create actors.
+	Clearly it should be just virtual.
+## move
+	Update the stat text, call every actor's doSomething function, then remove dead actors, reduce bonus point.
+	Clearly it should be just virtual.
+## cleanUp
+	Delete actors in m_actors vector.
+	Clearly it should be just virtual.
+## ~StudentWorld
+    Call　the cleanUp function.
+    Clearly it should be just virtual.
+## locationAtDirection
+	Return the location actor with given location and direction is facing.
+	This is a static function.
+## addActor
+	Add the actor to the private actors vector.
+	Clearly it should not be virtual.
+## playerWon, setPlayerWon, incCurrentJewels, getPlayer, shouldShowExit, getActor
+	Trivial accessor functions.
+	Clearly it should not be virtual.
+## countKleptoBots
+	Clearly it should not be virtual.
+## randomNumber
+	Generate a random number.
+	Clearly it should not be virtual.
+## getGoodie
+	Get the goodie at the location (x, y).
+	Clearly it should not be virtual.
+
 
 2. A list of all functionality that you failed to finish as well as known bugs in your classes, e.g. “I didn’t implement the Exit class.” or “My Angry KleptoBot doesn’t work correctly yet so I treat it like a KleptoBot right now.”
 
@@ -175,6 +210,7 @@ None.
 
 3. A list of other design decisions and assumptions you made; e.g., “It was not specified what to do in situation X, so this is what I decided to do.”
 
+It's not specified if newly add objects should act immediately. For simplicity's sake, I let them act at the next move.
 When there're more than one goodies, only consider picking up one of them.
 
 4. A description of how you tested each of your classes (1-2 paragraphs per class).
@@ -188,7 +224,7 @@ When there're more than one goodies, only consider picking up one of them.
 	Fire the bullet.
 # class Boulder
 	Move the boulder around and make sure it can only interact with hole, especially can't be on the same spot as the exit.
-	Make sure 5 bullets can destoy a boulder.
+	Make sure 5 bullets can destroy a boulder.
 # class Bullet
 	Fire it in all directions, by both bot and player.
 	Make sure it only hit valid targets, and won't cause wall to disappear after several shots.
@@ -212,10 +248,9 @@ When there're more than one goodies, only consider picking up one of them.
 	It's a base class. I test it by testing its subclasses.
 # class SnarlBot
 	Make sure the two different types (horizontal/vertical) works differently while having the same pattern, hit points, etc. 
-	Set breakpoint to check wheather it does something every frame or not. Move the player around, see if it fires when necessary.
+	Set breakpoint to check whether it does something every frame or not. Move the player around, see if it fires when necessary.
 # class KleptoBot
 	Wait to see if it can pick up goodie. Then kill it to see if it drops correctly (the correct goodie, the correct location and the correct sound.)
-
 # class AngryKleptoBot
 	Test it like a Kleptobot.
 	Test if it can also fire, using the same procedure as SnarlBot.
