@@ -210,6 +210,7 @@ bool Bot::fireIfPossible() {
     // Determine if in the right position
     std::pair<int, int> start, end;
     if (p->getX() == getX()) {
+        // Situation like:
         // .x...
         // .....
         // .y...
@@ -223,6 +224,7 @@ bool Bot::fireIfPossible() {
             return false;
     }
     else if (p->getY() == getY()) {
+        // Situation like:
         // .x..y..
         if ((p->getX() < getX() && getDirection() == left) || (p->getX() > getX() && getDirection() == right)) {
             // Set start, end
@@ -418,11 +420,8 @@ void KleptoBot::afterDeathAction() {
 
 void AngryKleptoBot::action() {
     // Fire if possible, if angry
-    if (fireIfPossible())
-        return;  // Fire already, end of the move
-    
-    // Ordinary actions
-    KleptoBot::action();
+    if (!fireIfPossible())
+        KleptoBot::action();  // Ordinary actions, if it can't fire
 }
 
 void KleptoBotFactory::doSomething() {

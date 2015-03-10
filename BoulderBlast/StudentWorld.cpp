@@ -226,6 +226,7 @@ int StudentWorld::countKleptoBots(int x1, int x2, int y1, int y2) const {
     });
 }
 
+// lowerbound <= rand <= upperbound. upperbound != 0
 int StudentWorld::randomNumber(int lowerbound, int upperbound) const {
     return rand()%upperbound + lowerbound;
 }
